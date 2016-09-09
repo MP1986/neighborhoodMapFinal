@@ -54,58 +54,12 @@
         .text {
             font-size: 12px;
         }
-        /* Dropdown Button */
-        
-        .dropbtn {
-            background-color: #4CAF50;
-            color: white;
-            padding: 16px;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-        }
-        /* Dropdown button on hover & focus */
-        
-        .dropbtn:hover,
-        .dropbtn:focus {
-            background-color: #3e8e41;
-        }
-        /* The container <div> - needed to position the dropdown content */
-        
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-        /* Dropdown Content (Hidden by Default) */
-        
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #f9f9f9;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-        }
-        /* Links inside the dropdown */
-        
-        .dropdown-content a {
-            color: black;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-        }
-        /* Change color of dropdown links on hover */
-        
-        .dropdown-content a:hover {
-            background-color: #f1f1f1
-        }
     </style>
 </head>
 
 <body>
     <strong>Cool Spots in Oakland</strong>
     <br>
-    <!--<select data-bind="options: filters, value: filter">
-    </select>-->
 
     <input type="text" data-bind="textInput: filter">
     <br>
@@ -123,6 +77,7 @@
         var markers = [];
         var polygon = null;
         var placeMarkers = [];
+
         function initMap() {
                 map = new google.maps.Map(document.getElementById('map'), {
                     center: {
@@ -174,9 +129,8 @@
                         location: {
                             lat: 37.804529,
                             lng: -122.290754
-                    }
-}
-                    ]
+                        }
+                    }]
                 };
                 var ViewModel = function(data) {
                     var self = this;
@@ -218,6 +172,7 @@
                             });
                         }
                     });
+
                     function hideListings() {
                         for (var i = 0; i < markers.length; i++) {
                             markers[i].setMap(null);
@@ -261,106 +216,99 @@
             // one infowindow which will open at the marker that is clicked, and populate based
             // on that markers position.
         function populateInfoWindow(marker, infowindow) {
-                var clientID = 'ZMMEQGBA5QMTRLTFC3PMU2RLC3GCZ1QQTII5KH0ZKW5OOBX0',
-                    clientSecret = 'JCF0AU5HJQOF0GDX2RD3E3YGXMNPZUGSWCL3RFJTKFCIYW32',
-                    version = '20130815',
-                    query = marker.title,
-                    base_url = "https://api.foursquare.com/v2/venues/";
-                // Check to make sure the infowindow is not already opened on this marker.
-                if (infowindow.marker != marker) {
+            var clientID = 'ZMMEQGBA5QMTRLTFC3PMU2RLC3GCZ1QQTII5KH0ZKW5OOBX0',
+                clientSecret = 'JCF0AU5HJQOF0GDX2RD3E3YGXMNPZUGSWCL3RFJTKFCIYW32',
+                version = '20130815',
+                query = marker.title,
+                base_url = "https://api.foursquare.com/v2/venues/";
+            // Check to make sure the infowindow is not already opened on this marker.
+            if (infowindow.marker != marker) {
+                $.ajax({
+                    url: base_url + '/search',
+                    dataType: 'json',
+                    data: {
+                        client_id: clientID,
+                        client_secret: clientSecret,
+                        near: 'San Francisco',
+                        v: version,
+                        query: query,
+                        async: true
+                    },
+                }).done(function(venueResult) {
+                    console.log("venue: ", venueResult);
+                    console.log("venue id: ", venueResult.response.venues[0].id);
+
+                    var tipsUrl = 'https://api.foursquare.com/v2/venues/' + venueResult.response.venues[0].id + '/tips';
+
                     $.ajax({
-                        url: base_url + '/search',
+                        url: tipsUrl,
                         dataType: 'json',
                         data: {
                             client_id: clientID,
                             client_secret: clientSecret,
-                            near: 'San Francisco',
-                            v: version,
-                            query: query,
-                            async: true
-                        },
-                    }).done(function(venueResult) {
-                            console.log("venue: ", venueResult);
-                            console.log("venue id: ", venueResult.response.venues[0].id);
-                            
-                            var tipsUrl = 'https://api.foursquare.com/v2/venues/' + venueResult.response.venues[0].id + '/tips';
-
-                            $.ajax({
-                                        url: tipsUrl,
-                                        dataType: 'json',
-                                        data: {
-                                            client_id: clientID,
-                                            client_secret: clientSecret,
-                                            v: '20130815'
-                                        }
-                                    }).done(function(tipResult) {
-                                        console.log(tipResult);
-                                        console.log(typeof tipResult.response.tips.items[0].text);
-                                    
-                                    if (typeof tipResult.response.tips.items[0].text === 'string') {
-                                        console.log('Is a string.');
-                                    }
-
-                                    getStreetViewFunction(venueResult.response.venues[0].location.address, tipResult.response.tips.items[0].text); 
-                            }).fail(function(error) {
-                                getStreetViewFunction(venueResult, 'Tips are not available');
-                        });
-                        // Clear the infowindow content to give the streetview time to load.
-                        infowindow.setContent(''); 
-                        infowindow.marker = marker;
-                        // Make sure the marker property is cleared if the infowindow is closed.
-                        infowindow.addListener('closeclick', function() {
-                            infowindow.marker = null;
-                        });
-
-                    }).fail(function(error) {
-                        getStreetViewFunction('error message', 'Tips are not available');
-                    });
-                        function getStreetViewFunction(venueResult, tipResult) {
-                            var streetViewService = new google.maps.StreetViewService();
-                            var radius = 50;
-                            // In case the status is OK, which means the pano was found, compute the
-                            // position of the streetview image, then calculate the heading, then get a
-                            // panorama from that and set the options
-
-                            // Bookmark.
-
-
-                            function getStreetView(data, status) 
-                            {
-                                    if (status == google.maps.StreetViewStatus.OK) 
-                                    {
-                                        var nearStreetViewLocation = data.location.latLng;
-                                        var heading = google.maps.geometry.spherical.computeHeading(
-                                            nearStreetViewLocation, marker.position);
-                                        infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div><div>' + venueResult + '</div><div>' + tipResult + '</div>');
-                                        var panoramaOptions = 
-                                        {
-                                            position: nearStreetViewLocation,
-                                            pov: 
-                                            {
-                                                heading: heading,
-                                                pitch: 30
-                                            }
-                                        };
-                                        var panorama = new google.maps.StreetViewPanorama(
-                                            document.getElementById('pano'), panoramaOptions);
-                                    } else 
-                                    {
-                                        infowindow.setContent('<div>' + marker.title + '</div>' +
-                                            '<div>No Street View Found</div>');
-                                    }
-                                }
-                                // Use streetview service to get the closest streetview image within
-                                // 50 meters of the markers position
-                            streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
-                            // Open the infowindow on the correct marker.
-                            infowindow.open(map, marker);
+                            v: '20130815'
                         }
+                    }).done(function(tipResult) {
+                        console.log(tipResult);
+                        console.log(typeof tipResult.response.tips.items[0].text);
+
+                        if (typeof tipResult.response.tips.items[0].text === 'string') {
+                            console.log('Is a string.');
+                        }
+
+                        getStreetViewFunction(venueResult.response.venues[0].location.address, tipResult.response.tips.items[0].text);
+                    }).fail(function(error) {
+                        getStreetViewFunction(venueResult, 'Tips are not available');
+                    });
+                    // Clear the infowindow content to give the streetview time to load.
+                    infowindow.setContent('');
+                    infowindow.marker = marker;
+                    // Make sure the marker property is cleared if the infowindow is closed.
+                    infowindow.addListener('closeclick', function() {
+                        infowindow.marker = null;
+                    });
+
+                }).fail(function(error) {
+                    getStreetViewFunction('error message', 'Tips are not available');
+                });
+
+                function getStreetViewFunction(venueResult, tipResult) {
+                        var streetViewService = new google.maps.StreetViewService();
+                        var radius = 50;
+                        // In case the status is OK, which means the pano was found, compute the
+                        // position of the streetview image, then calculate the heading, then get a
+                        // panorama from that and set the options
+
+                        function getStreetView(data, status) {
+                                if (status == google.maps.StreetViewStatus.OK) {
+                                    var nearStreetViewLocation = data.location.latLng;
+                                    var heading = google.maps.geometry.spherical.computeHeading(
+                                        nearStreetViewLocation, marker.position);
+                                    infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div><div>' + venueResult + '</div><div>' + tipResult + '</div>');
+                                    var panoramaOptions = {
+                                        position: nearStreetViewLocation,
+                                        pov: {
+                                            heading: heading,
+                                            pitch: 30
+                                        }
+                                    };
+                                    var panorama = new google.maps.StreetViewPanorama(
+                                        document.getElementById('pano'), panoramaOptions);
+                                } else {
+                                    infowindow.setContent('<div>' + marker.title + '</div>' +
+                                        '<div>No Street View Found</div>');
+                                }
+                            }
+                            // Use streetview service to get the closest streetview image within
+                            // 50 meters of the markers position
+                        streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
+                        // Open the infowindow on the correct marker.
+                        infowindow.open(map, marker);
+                    }
                     // This function will loop through the listings and hide all but the one 
                     // currently selected in the dropdown menu.
-                }
             }
+        }
     </script>
 
     <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=geometry&key=AIzaSyAFOLdihpWd9JBI3n5KcXK7dXGdGIjHFcY&v=3&callback=initMap">
