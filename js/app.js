@@ -4,6 +4,10 @@
         var placeMarkers = [];
 
         function initMap() {
+
+            if (typeof(elem) !== 'undefined') {
+                console.log("Google Maps unavailable.")
+            }
                 map = new google.maps.Map(document.getElementById('map'), {
                     center: {
                         lat: 37.837959,
@@ -62,6 +66,7 @@
                     location.marker = marker;
                     self.listClick = function(loc) {
                         console.log(loc);
+                        google.maps.event.trigger( marker, 'click' );
                     };
                     self.filters = ko.observableArray(data.filters);
                     self.filter = ko.observable('');
@@ -104,6 +109,9 @@
                         }
                     }
                 };
+
+//                function clickResponse(){}
+
                 ko.applyBindings(new ViewModel(locations));
                 var largeInfowindow = new google.maps.InfoWindow({
                     maxWidth: 200
