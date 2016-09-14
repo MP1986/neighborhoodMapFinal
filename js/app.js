@@ -63,10 +63,18 @@
                 };
                 var ViewModel = function(data) {
                     var self = this;
+
+                    self.shouldShowSidebar = ko.observable(true);
+
+                    self.toggleSidebar = function() {
+                        self.shouldShowSidebar(!self.shouldShowSidebar());
+                        console.log("Toggle sidebar.")
+                    }
+
                     location.marker = marker;
                     self.listClick = function(loc) {
                         console.log(loc);
-                        google.maps.event.trigger( marker, 'click' );
+                        google.maps.event.trigger( loc.marker, 'click' );
                     };
                     self.filters = ko.observableArray(data.filters);
                     self.filter = ko.observable('');
@@ -243,4 +251,8 @@
                     // This function will loop through the listings and hide all but the one 
                     // currently selected in the dropdown menu.
             }
+
+        }
+                function googleError() {
+            alert('Google Maps could not load properly.');
         }
