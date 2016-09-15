@@ -80,7 +80,9 @@
             background-color: #fff;
             border-radius: 4px;
             padding: 5px;
+            z-index: 10;
         }
+
 
         @media only screen and (max-width: 600px) {
         .sidebar {
@@ -107,7 +109,7 @@
         }
 
         input {
-            width: 75px;
+            width: 200px;
         }
         * {
             font-size: 14px;
@@ -118,4 +120,14 @@
             height: 50px;
             width: 50px;
         }
+        }
+
+        .sidebar {
+            transform: translateX(-100vw);
+            transition: transform .25s ease-in-out;
+        }
+
+        .slideIn {
+            transform: translateX(0);
+            transition: transform .25s ease-in-out;
         }
