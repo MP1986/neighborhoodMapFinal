@@ -1,258 +1,116 @@
-         var map;
-        var markers = [];
-        var polygon = null;
-        var placeMarkers = [];
+    // Variables for player movement boundaries.
+var maxY = 404;
+var minY = 0;
+var maxX = 404;
+var minX = 0;
+var playerStartX = 202;
+var playerStartY = 404;
 
-        function initMap() {
+var Enemy = function() {
+    // Variables applied to each of our instances go here,
+    // we've provided one for you to get started
 
-            if (typeof(elem) !== 'undefined') {
-                console.log("Google Maps unavailable.")
-            }
-                map = new google.maps.Map(document.getElementById('map'), {
-                    center: {
-                        lat: 37.837959,
-                        lng: -122.282402
-                    },
-                    zoom: 13
-                });
-                var locations = {
-                    filters: ["Sudo Room", "Eli's Mile High Club", "East Bay Rats MC", "Oakland Metro Operahouse", "Lake Merritt", "The Crucible"],
-                    items: [{
-                        name: "Sudo Room",
-                        title: "Sudo Room",
-                        location: {
-                            lat: 37.835000,
-                            lng: -122.264186
-                        },
-                    }, {
-                        name: "Eli's Mile High Club",
-                        title: "Eli's Mile High Club",
-                        location: {
-                            lat: 37.825785,
-                            lng: -122.269663
-                        }
-                    }, {
-                        name: "East Bay Rats MC",
-                        title: "East Bay Rats MC",
-                        location: {
-                            lat: 37.821413,
-                            lng: -122.277001
-                        }
-                    }, {
-                        name: "Oakland Metro Operahouse",
-                        title: "Oakland Metro Operahouse",
-                        location: {
-                            lat: 37.797058,
-                            lng: -122.277791
-                        }
-                    }, {
-                        name: "Lake Merritt",
-                        title: "Lake Merritt",
-                        location: {
-                            lat: 37.805146,
-                            lng: -122.257394
-                        }
-                    }, {
-                        name: "The Crucible",
-                        title: "The Crucible",
-                        location: {
-                            lat: 37.804529,
-                            lng: -122.290754
-                        }
-                    }]
-                };
-                var ViewModel = function(data) {
-                    var self = this;
+    // The image/sprite for our enemies, this uses
+    // a helper we've provided to easily load images
+    this.sprite = 'images/enemy-bug.png';
 
-                    self.shouldShowSidebar = ko.observable(true);
+    this.x = 0;
+    this.y = 220;
+    this.width = 50;
+    this.height = 50;
+    this.speed = Math.random() * 300 + 40;
+};
 
-                    self.toggleSidebar = function() {
-                        self.shouldShowSidebar(!self.shouldShowSidebar());
-                        console.log("Toggle sidebar.")
-                    }
+    // Update the enemy's position, required method for game
+    // Parameter: dt, a time delta between ticks
+Enemy.prototype.update = function(dt) {
+    // You should multiply any movement by the dt parameter
+    // which will ensure the game runs at the same speed for
+    // all computers.
+    this.x += dt * this.speed;
 
-                    location.marker = marker;
-                    self.listClick = function(loc) {
-                        console.log(loc);
-                        google.maps.event.trigger( loc.marker, 'click' );
-                    };
-                    self.filters = ko.observableArray(data.filters);
-                    self.filter = ko.observable('');
-                    self.items = ko.observableArray(data.items);
-                    self.filteredItems = ko.computed(function() {
-                        var filter = self.filter().toLowerCase();
-                        if (!filter || filter == "None") {
-                            self.items().forEach(function(item) {
-                                if (item.marker) {
-                                    item.marker.setVisible(true);
-                                }
-                            });
-                            return self.items();
-                        } else {
-                            return ko.utils.arrayFilter(self.items(), function(i) {
-                                console.log(i);
-                                //return i.title == filter;
-                                //return true;
-                                // If the location title contains the filter term
-                                //if (i.title === filter) {
-                                if (i.title.toLowerCase().indexOf(filter) !== -1) {
-                                    // show the map marker
-                                    if (typeof i.marker !== 'undefined') {
-                                        i.marker.setVisible(true);
-                                    }
-                                    return true; // show the location in the list
-                                } else {
-                                    // hide the map marker 
-                                    if (typeof i.marker !== 'undefined') {
-                                        i.marker.setVisible(false);
-                                    }
-                                }
-                            });
-                        }
-                    });
+    var spawnPoint = Math.random();
 
-                    function hideListings() {
-                        for (var i = 0; i < markers.length; i++) {
-                            markers[i].setMap(null);
-                        }
-                    }
-                };
-
-//                function clickResponse(){}
-
-                ko.applyBindings(new ViewModel(locations));
-                var largeInfowindow = new google.maps.InfoWindow({
-                    maxWidth: 200
-                });
-                var bounds = new google.maps.LatLngBounds();
-                // The following group uses the location array to create an array of markers on initialize.
-                for (var i = 0; i < locations.items.length; i++) {
-                    // Get the position from the location array.
-                    var position = locations.items[i].location;
-                    var title = locations.items[i].title;
-                    // Create a marker per location, and put into markers array.
-                    var marker = new google.maps.Marker({
-                        map: map,
-                        position: position,
-                        title: title,
-                        animation: google.maps.Animation.DROP,
-                        id: i
-                    });
-                    locations.items[i].marker = marker;
-                    // Push the marker to our array of markers.
-                    markers.push(marker);
-                    // Create an onclick event to open an infowindow at each marker.
-                    marker.addListener('click', function() {
-                        var self = this;
-                        populateInfoWindow(this, largeInfowindow),
-                            this.setAnimation(google.maps.Animation.BOUNCE),
-                            setTimeout(function() {
-                                self.setAnimation(null);
-                            }, 3500);
-                    });
-                    bounds.extend(markers[i].position);
-                }
-                // Extend the boundaries of the map for each marker
-                map.fitBounds(bounds);
-            }
-            // This function populates the infowindow when the marker is clicked. We'll only allow
-            // one infowindow which will open at the marker that is clicked, and populate based
-            // on that markers position.
-        function populateInfoWindow(marker, infowindow) {
-            var clientID = 'ZMMEQGBA5QMTRLTFC3PMU2RLC3GCZ1QQTII5KH0ZKW5OOBX0',
-                clientSecret = 'JCF0AU5HJQOF0GDX2RD3E3YGXMNPZUGSWCL3RFJTKFCIYW32',
-                version = '20130815',
-                query = marker.title,
-                base_url = "https://api.foursquare.com/v2/venues/";
-            // Check to make sure the infowindow is not already opened on this marker.
-            if (infowindow.marker != marker) {
-                $.ajax({
-                    url: base_url + '/search',
-                    dataType: 'json',
-                    data: {
-                        client_id: clientID,
-                        client_secret: clientSecret,
-                        near: 'San Francisco',
-                        v: version,
-                        query: query,
-                        async: true
-                    },
-                }).done(function(venueResult) {
-                    console.log("venue: ", venueResult);
-                    console.log("venue id: ", venueResult.response.venues[0].id);
-
-                    var tipsUrl = 'https://api.foursquare.com/v2/venues/' + venueResult.response.venues[0].id + '/tips';
-
-                    $.ajax({
-                        url: tipsUrl,
-                        dataType: 'json',
-                        data: {
-                            client_id: clientID,
-                            client_secret: clientSecret,
-                            v: '20130815'
-                        }
-                    }).done(function(tipResult) {
-                        console.log(tipResult);
-                        console.log(typeof tipResult.response.tips.items[0].text);
-
-                        if (typeof tipResult.response.tips.items[0].text === 'string') {
-                            console.log('Is a string.');
-                        }
-
-                        getStreetViewFunction(venueResult.response.venues[0].location.address, tipResult.response.tips.items[0].text);
-                    }).fail(function(error) {
-                        getStreetViewFunction(venueResult, 'Tips are not available');
-                    });
-                    // Clear the infowindow content to give the streetview time to load.
-                    infowindow.setContent('');
-                    infowindow.marker = marker;
-                    // Make sure the marker property is cleared if the infowindow is closed.
-                    infowindow.addListener('closeclick', function() {
-                        infowindow.marker = null;
-                    });
-
-                }).fail(function(error) {
-                    getStreetViewFunction('error message', 'Tips are not available');
-                });
-
-                function getStreetViewFunction(venueResult, tipResult) {
-                        var streetViewService = new google.maps.StreetViewService();
-                        var radius = 50;
-                        // In case the status is OK, which means the pano was found, compute the
-                        // position of the streetview image, then calculate the heading, then get a
-                        // panorama from that and set the options
-
-                        function getStreetView(data, status) {
-                                if (status == google.maps.StreetViewStatus.OK) {
-                                    var nearStreetViewLocation = data.location.latLng;
-                                    var heading = google.maps.geometry.spherical.computeHeading(
-                                        nearStreetViewLocation, marker.position);
-                                    infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div><div>' + venueResult + '</div><div>' + tipResult + '</div>');
-                                    var panoramaOptions = {
-                                        position: nearStreetViewLocation,
-                                        pov: {
-                                            heading: heading,
-                                            pitch: 30
-                                        }
-                                    };
-                                    var panorama = new google.maps.StreetViewPanorama(
-                                        document.getElementById('pano'), panoramaOptions);
-                                } else {
-                                    infowindow.setContent('<div>' + marker.title + '</div>' +
-                                        '<div>No Street View Found</div>');
-                                }
-                            }
-                            // Use streetview service to get the closest streetview image within
-                            // 50 meters of the markers position
-                        streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
-                        // Open the infowindow on the correct marker.
-                        infowindow.open(map, marker);
-                    }
-                    // This function will loop through the listings and hide all but the one 
-                    // currently selected in the dropdown menu.
-            }
-
+    if (this.x > maxX) {
+        if (spawnPoint >= 0 && spawnPoint <= .33) {
+            this.y = 220;
+            this.x = 0;
+        } else if (spawnPoint > .33 && spawnPoint <= .66) {
+            this.y = 220 - 85.5;
+            this.x = 0;
+        } else if (spawnPoint > .66 && spawnPoint <= 1) {
+            this.y = 220 - (85.5 * 2);
+            this.x = 0;
         }
-                function googleError() {
-            alert('Google Maps could not load properly.');
-        }
+    }
+};
+
+    // Draw the enemy on the screen, required method for game
+Enemy.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+    // Now write your own player class
+    // This class requires an update(), render() and
+    // a handleInput() method.
+var Player = function() {
+    this.x = playerStartX;
+    this.y = playerStartY;
+    this.width = 50;
+    this.height = 50;
+    this.sprite = 'images/char-boy.png';
+};
+
+Player.prototype.update = function(dt) {
+
+    //Iterates through each enemy and checks for collision with player then sends //player back to start.
+
+    for (var i = 0; i < allEnemies.length; i++) {
+        var enemy = allEnemies[i];
+        if (player.x < enemy.x + enemy.width && player.x + player.width > enemy.x && player.y < enemy.y + enemy.height && player.height + player.y > enemy.y) {
+            player.x = 202;
+            player.y = 404;
+        };
+    }
+    //Detects when player reaches top and sends back to beginning.
+    if (this.y < minY) {
+        this.x = playerStartX;
+        this.y = playerStartY;
+    }
+};
+
+    //Renders player.
+Player.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+    //Handle player input.
+Player.prototype.handleInput = function(direction) {
+    if (direction == 'up' && this.y > minY)
+        this.y -= 85.5;
+    else if (direction == 'down' && this.y < maxY)
+        this.y += 85.5;
+    else if (direction == 'left' && this.x > minX)
+        this.x -= 101;
+    else if (direction == 'right' && this.x < maxX)
+        this.x += 101;
+};
+
+    // Now instantiate your objects.
+    // Place all enemy objects in an array called allEnemies
+    // Place the player object in a variable called player
+var allEnemies = [new Enemy(), new Enemy(), new Enemy()];
+var player = new Player();
+
+    // This listens for key presses and sends the keys to your
+    // Player.handleInput() method. You don't need to modify this.
+document.addEventListener('keyup', function(e) {
+    var allowedKeys = {
+        37: 'left',
+        38: 'up',
+        39: 'right',
+        40: 'down'
+    };
+
+    player.handleInput(allowedKeys[e.keyCode]);
+});
