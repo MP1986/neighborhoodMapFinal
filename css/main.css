@@ -32,11 +32,9 @@
 
         #map {
             bottom: 0px;
-            width: 67%;
+            width: 100%;
             height: 100%;
             position: absolute;
-            right: 0px;
-            z-index: 9;
         }
         .options-box {
             background: #fff;
@@ -80,13 +78,26 @@
             background-color: #fff;
             border-radius: 4px;
             padding: 5px;
-            z-index: 10;
+            z-index: 3;
         }
 
+        .sidebar {
+            top: 80px;
+            position: absolute;
+            z-index: 3;
+            width: 280px;
+            background-color: #ccc;
+            transform: translateX(-100vw);
+            transition: transform .25s ease-in-out;
+        }
+
+        .slideIn {
+            transform: translateX(0);
+            transition: transform .25s ease-in-out;
+        }
 
         @media only screen and (max-width: 600px) {
         .sidebar {
-            z-index: 1;
             background-color: #ccc;
             max-width: 75vw;
             padding: 10px;
@@ -95,7 +106,6 @@
 
         li {
             width: 50%;
-            z-index: 1;
         }
 
         #pano {
@@ -105,7 +115,6 @@
 
         #map {
             width: 100%;
-            z-index: -1;
         }
 
         input {
@@ -122,12 +131,3 @@
         }
         }
 
-        .sidebar {
-            transform: translateX(-100vw);
-            transition: transform .25s ease-in-out;
-        }
-
-        .slideIn {
-            transform: translateX(0);
-            transition: transform .25s ease-in-out;
-        }
