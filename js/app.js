@@ -198,6 +198,17 @@ function populateInfoWindow(marker, infowindow) {
                 }
 
                 getStreetViewFunction(venueResult.response.venues[0].location.address, tipResult.response.tips.items[0].text);
+
+                var items = tips.hasOwnProperty('items') ? tipResult.response.tips.items[0] : "Unavailable";
+                var tips = tipResult.response.tips ? tipResult.response.tips : "Unavailable";
+
+                if(tips === null){
+                    console.log("Unavailable");
+                    infowindow.setContent(venueResult = 'Unavailable');
+
+                }
+
+
             }).fail(function(error) {
                 getStreetViewFunction("Retrieval error", 'Tips are not available');
             });
