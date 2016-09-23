@@ -176,8 +176,6 @@ function populateInfoWindow(marker, infowindow) {
                 async: true
             },
         }).done(function(venueResult) {
-            console.log("venue: ", venueResult);
-            console.log("venue id: ", venueResult.response.venues[0].id);
 
             var tipsUrl = 'https://api.foursquare.com/v2/venues/' + venueResult.response.venues[0].id + '/tips';
 
@@ -190,24 +188,12 @@ function populateInfoWindow(marker, infowindow) {
                     v: '20130815'
                 }
             }).done(function(tipResult) {
-                console.log(tipResult);
-                console.log(typeof tipResult.response.tips.items[0].text);
+                var address = venueResult.response.venues[0].location.address || venueResult.response.venues[0].location.formattedAddress[0];
+                var tips = tipResult.response.tips ? tipResult.response.tips : "";
+                var items = tips.hasOwnProperty('items') ? tipResult.response.tips.items[0] : "";
+                var tips = items.text || "";
 
-                if (typeof tipResult.response.tips.items[0].text === 'string') {
-                    console.log('Is a string.');
-                }
-
-                getStreetViewFunction(venueResult.response.venues[0].location.address, tipResult.response.tips.items[0].text);
-
-                var items = tips.hasOwnProperty('items') ? tipResult.response.tips.items[0] : "Unavailable";
-                var tips = tipResult.response.tips ? tipResult.response.tips : "Unavailable";
-
-                if(tips === null){
-                    console.log("Unavailable");
-                    infowindow.setContent(venueResult = 'Unavailable');
-
-                }
-
+                getStreetViewFunction(address || "No address found.", tips || "No tips found.");
 
             }).fail(function(error) {
                 getStreetViewFunction("Retrieval error", 'Tips are not available');
@@ -236,7 +222,7 @@ function populateInfoWindow(marker, infowindow) {
                     var nearStreetViewLocation = data.location.latLng;
                     var heading = google.maps.geometry.spherical.computeHeading(
                         nearStreetViewLocation, marker.position);
-                    infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div><div>' + venueResult + '</div><div>' + tipResult + '</div>');
+                    infowindow.setContent('<div><h3>' + marker.title + '</h3><div id="pano"></div><p>' + venueResult + '</p><hr><p>' + tipResult + '</p></div>');
                     var panoramaOptions = {
                         position: nearStreetViewLocation,
                         pov: {
@@ -247,8 +233,7 @@ function populateInfoWindow(marker, infowindow) {
                     var panorama = new google.maps.StreetViewPanorama(
                         document.getElementById('pano'), panoramaOptions);
                 } else {
-                    infowindow.setContent('<div>' + marker.title + '</div>' +
-                        '<div>No Street View Found</div>');
+                    infowindow.setContent('<div><h3>' + marker.title + '</h3>' + '<p>No Street View Found</p></div>' + '<p>' + venueResult + '</p><hr><p>' + tipResult + '</p>');
                 }
             }
             // Use streetview service to get the closest streetview image within
