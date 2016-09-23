@@ -196,7 +196,7 @@ function populateInfoWindow(marker, infowindow) {
                 getStreetViewFunction(address || "No address found.", tips || "No tips found.");
 
             }).fail(function(error) {
-                getStreetViewFunction("Retrieval error", 'Tips are not available');
+                getStreetViewFunction("Retrieval error.", 'Tips are not available.');
             });
             // Clear the infowindow content to give the streetview time to load.
             infowindow.setContent('');
@@ -207,7 +207,7 @@ function populateInfoWindow(marker, infowindow) {
             });
 
         }).fail(function(error) {
-            getStreetViewFunction('Retrieval error', 'Tips are not available');
+            getStreetViewFunction('Retrieval error.', 'Tips are not available.');
         });
 
         function getStreetViewFunction(venueResult, tipResult) {
