@@ -1,133 +1,142 @@
-        html,
-        body {
-            font-family: Arial, sans-serif;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            height: 100%;
-            width: 33%;
-            position: relative;
-        }
-        input {
-            font-size: 12px;
-        }
-        h1 {
-            color: #525454;
-            font-size: 22px;
-            margin: 0 0 10px 0;
-            text-align: center;
-        }
-        hr {
-            background: #D0D7D9;
-            height: 1px;
-            margin: 20px 0 20px 0;
-            border: none;
-        }
+html,
+body {
+    font-family: Arial, sans-serif;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
 
-        li {
-            width: 25%;
-        }
+.container {
+    height: 100%;
+    width: 33%;
+    position: relative;
+}
 
-        #map {
-            bottom: 0px;
-            width: 100%;
-            height: 100%;
-            position: absolute;
-        }
-        .options-box {
-            background: #fff;
-            border: 1px solid #999;
-            border-radius: 3px;
-            height: 100%;
-            line-height: 35px;
-            padding: 10px 10px 30px 10px;
-            text-align: left;
-            width: 340px;
-        }
-        #pano {
-            height: 200px;
-            width: 200px;
-            margin: auto;
-        }
-        .text {
-            font-size: 12px;
-        }
+input {
+    font-size: 12px;
+}
 
-        .box-shadow-menu {
-            position: relative;
-            padding-left: 1.25em;
-        }
+h1 {
+    color: #525454;
+    font-size: 22px;
+    margin: 0 0 10px 0;
+    text-align: center;
+}
 
-        .box-shadow-menu:before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 0.25em;
-            width: 1em;
-            height: 0.15em;
-            background: black;
-            box-shadow: 0 0.25em 0 0 black, 0 0.5em 0 0 black;
-        }
+hr {
+    background: #D0D7D9;
+    height: 1px;
+    margin: 20px 0 20px 0;
+    border: none;
+}
 
-        .toggle {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background-color: #fff;
-            border-radius: 4px;
-            padding: 5px;
-            z-index: 3;
-        }
+li {
+    width: 25%;
+}
 
-        .sidebar {
-            top: 80px;
-            position: absolute;
-            z-index: 3;
-            width: 280px;
-            background-color: #ccc;
-            transform: translateX(-100vw);
-            transition: transform .25s ease-in-out;
-        }
+#map {
+    bottom: 0px;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
 
-        .slideIn {
-            transform: translateX(0);
-            transition: transform .25s ease-in-out;
-        }
+.options-box {
+    background: #fff;
+    border: 1px solid #999;
+    border-radius: 3px;
+    height: 100%;
+    line-height: 35px;
+    padding: 10px 10px 30px 10px;
+    text-align: left;
+    width: 340px;
+}
 
-        @media only screen and (max-width: 600px) {
-        .sidebar {
-            background-color: #ccc;
-            max-width: 75vw;
-            padding: 10px;
+#pano {
+    height: 200px;
+    width: 200px;
+    margin: auto;
+}
 
-        }
+.text {
+    font-size: 12px;
+}
 
-        li {
-            width: 50%;
-        }
+.box-shadow-menu {
+    position: relative;
+    padding-left: 1.25em;
+}
 
-        #pano {
-            height: 100px;
-            width: 100px;
-        }
+.box-shadow-menu:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.25em;
+    width: 1em;
+    height: 0.15em;
+    background: black;
+    box-shadow: 0 0.25em 0 0 black, 0 0.5em 0 0 black;
+}
 
-        #map {
-            width: 100%;
-        }
+.toggle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #fff;
+    border-radius: 4px;
+    padding: 5px;
+    z-index: 3;
+}
 
-        input {
-            width: 200px;
-        }
-        * {
-            font-size: 14px;
-        }
-        }
-        @media only screen and (max-width: 300px) {
-        #pano {
-            height: 50px;
-            width: 50px;
-        }
-        }
+.sidebar {
+    top: 80px;
+    position: absolute;
+    z-index: 3;
+    width: 280px;
+    background-color: #ccc;
+    transform: translateX(-100vw);
+    transition: transform .25s ease-in-out;
+}
 
+.slideIn {
+    transform: translateX(0);
+    transition: transform .25s ease-in-out;
+}
+
+@media only screen and (max-width: 600px) {
+
+    .sidebar {
+        background-color: #ccc;
+        max-width: 75vw;
+        padding: 10px;
+    }
+
+    li {
+        width: 50%;
+    }
+
+    #pano {
+        height: 100px;
+        width: 100px;
+    }
+
+    #map {
+        width: 100%;
+    }
+
+    input {
+        width: 200px;
+    }
+
+    * {
+        font-size: 14px;
+    };
+}
+
+@media only screen and (max-width: 300px) {
+
+    #pano {
+        height: 50px;
+        width: 50px;
+    };
+}
