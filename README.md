@@ -13,12 +13,9 @@ Download directory from https://github.com/MP1986/neighborhoodMapFinal.  Open ne
 to run the neighborhood map.
 
 SUPPORT
-
 -------------------
 https://github.com/MP1986
 
 LICENSE 
-
 -------------------
-
 The template for this project was provided by Udacity.
