@@ -101,7 +101,7 @@ li {
 .slideIn {
     transform: translateX(0);
     transition: transform .25s ease-in-out;
-}
+} 
 
 @media only screen and (max-width: 600px) {
 
@@ -130,7 +130,7 @@ li {
 
     * {
         font-size: 14px;
-    };
+    }
 }
 
 @media only screen and (max-width: 300px) {
@@ -138,5 +138,5 @@ li {
     #pano {
         height: 50px;
         width: 50px;
-    };
+    }
 }
